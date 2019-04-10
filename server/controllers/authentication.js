@@ -7,28 +7,29 @@ const Personal = require('../models/personal');
 const initialisePerson =require ('../utils/util_functions').initialisePerson
 
 module.exports.register = (req, res) => {
-  if(!req.body.email || !req.body.password){
+  if(!req.body){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
-
 switch (req.body.type){
 case'student': {
-
    let student =new Student();
    initialisePerson(student,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin)
-   student.numinscription=req.body.numinscription
+   student.numInscription=req.body.numInscription
    student.yearOfStudy=req.body.yearOfStudy
    student.branch=req.body.branch
    student.requestedPath=req.body.requestedPath
    student.setPassword(req.body.password)
 
     student.save((err,stud) => {
+      if(!err){
         let token;
-        token = student.generateJwt();
+        token = stud.generateJwt();
         res.status(200);
         res.json({
           "token" : token
         });
+      }
+        
       });
   }
   break;
@@ -41,12 +42,15 @@ case 'teacher' :{
     teacher.setPassword(req.body.password);
 
     teacher.save((err,teach) => {
+      if(!err){
         let token;
-        token = teacher.generateJwt();
+        token = teach.generateJwt();
         res.status(200);
         res.json({
           "token" : token
         });
+      }
+        
       });
   }
   break;
@@ -61,12 +65,15 @@ case 'partner' :{
     partner.setPassword(req.body.password);
 
     partner.save((err,partn) => {
+      if(!err){
         let token;
-        token = partner.generateJwt();
+        token = partn.generateJwt();
         res.status(200);
         res.json({
           "token" : token
         });
+      }
+        
       });
   }
   break;
@@ -76,21 +83,29 @@ case 'personal' :{
     personal.setPassword(req.body.password);
 
     personal.save((err,pers) => {
+      if(!err){
         let token;
-        token = personal.generateJwt();
+        token = pers.generateJwt();
         res.status(200);
         res.json({
           "token" : token
         });
+      }
+        
       });
   }
   break;
+  default:{
+    res.status(401).json({
+      success:false,
+      message:"You must specify the role of the the user trying to register"
+    })
+}
   }
 
 };
 
 module.exports.login = (req, res) => {
-
 switch (req.body.type){
     case 'student' :{
         passport.authenticate('student', (err, user, info) => {
@@ -116,6 +131,7 @@ switch (req.body.type){
     break;
     case 'teacher' :{
         passport.authenticate('teacher', (err, user, info) => {
+
             let token;
         
             // If Passport throws/catches an error
@@ -123,7 +139,7 @@ switch (req.body.type){
               res.status(404).json(err);
               return;
             }
-        
+
             // If a user is found
             if(user){
               token = user.generateJwt();
@@ -186,7 +202,12 @@ switch (req.body.type){
           })(req, res);
     }
     break;
-
+ default:{
+      res.status(401).json({
+        success:false,
+        message:"You must specify the role of the the user trying to login"
+      })
+ }
 }
 
 

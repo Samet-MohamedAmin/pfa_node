@@ -14,12 +14,14 @@ instructor :{
     required :true
 },
 startDate :{
-    type:String,
-    required :true
+    type:Date,
+    required :true,
+    default:new Date()
 },
 endDate :{
-    type:String,
-    required :true
+    type:Date,
+    required :true,
+    default:new Date()
 },
 totalHours:{
     type:Number,

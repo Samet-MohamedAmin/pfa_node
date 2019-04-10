@@ -21,15 +21,17 @@ const StudentSchema = Schema({
         required :true
     },
     birthday: {
-        type: String,
-        required: true
+        type: Date,
+        required: true,
+        default:new Date()
+
     },
     cin :{
         type:Number,
         required :true
     },
 
-    numinscription: {
+    numInscription: {
         type: Number, 
         required: true
     },
@@ -43,7 +45,7 @@ const StudentSchema = Schema({
     },
     requestedPath: {
         type: String,
-         required: true
+        required: true
     },
     coursesAttended :{
         type:[
