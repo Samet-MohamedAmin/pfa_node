@@ -2,6 +2,7 @@
 const Course = require('../models/course')
 const Student = require('../models/student')
 const Teacher = require('../models/teacher')
+const RegistrationRequest=require('../models/registrationRequest')
 const mongodb = require("mongodb")
 
 module.exports = {
@@ -11,6 +12,7 @@ module.exports = {
     return Course
       .find()
   },
+ 
   getOne (_id) {
     console.log('course getOne')
     console.log(new Date())
@@ -21,6 +23,22 @@ module.exports = {
     console.log(new Date())
     return Course.find({concernedBranches:branch})
   },
+
+  // this two methods concers courses registration requests
+  getAllUsersRequests () {
+    console.log('course requests getAll')
+    console.log(new Date())
+    return RegistrationRequest
+      .find()
+  },
+  getUserRequests () {
+    console.log('course requests getAll')
+    console.log(new Date())
+    return RegistrationRequest
+      .find({userId:userId})
+  },
+
+
   async getRecommendations(userType,userId) {
     console.log('course Recommendations')
     console.log(new Date())
@@ -131,59 +149,25 @@ module.exports = {
       return err
     }
   },
-  async userRegistration(userType,userId,courseId) {
-    console.log('user registration')
+  async userRegistrationRequest(userId,courseId) {
+    console.log('user registration request')
     console.log(new Date())
 
     if(mongodb.ObjectID.isValid(userId) && mongodb.ObjectID.isValid(courseId)){
+      const request = await RegistrationRequest.find({userId:userId,courseId:courseId})
+      if(request.length == 0){
+       let newRequest =new RegistrationRequest()
+       newRequest.userId=userId
+       newRequest.courseId=courseId
 
-       const course = await Course.findById(courseId)
-       if (course){
-        if(!course.isUserRegistered(userId)){
-          course.attendees.push(userId)
-          course.save()
-          //refreshing the rating info in the user document
-          
-          if(userType=="student"){
-              var user=await Student.findById(userId)
-
-          }else if(userType=="teacher"){
-              var user=await Teacher.findById(userId)
-
-          }else{
-            return {
-              success:false,
-              message:"Only teachers and students can register to courses  "
-              }
-          }
-          if(user){
-            user.coursesAttended.push({
-              _id:courseId,
-              rated :false,
-              rating:undefined
-            })
-              return user.save()
-          }else {
-            return {
-              success:false,
-              message:"User not found "
-              }
-          }
-        }else {
-          return {
-            success:false,
-            message:"user is already registered in this course"
-            }
+       return newRequest.save()
+      }else{
+        return {
+          success:false ,
+          message:"this user have been already requested for this course "
         }
-                  
-            }else{
-              console.log('!course')
-             return {
-              success:false,
-              message:"Course not found "
-              }
-            }          
-       
+      }
+     
     }else  {
       let error={
         success:false,
@@ -194,6 +178,25 @@ module.exports = {
     }
    
   },
+  async userRegistrationValidation(userType,userId,courseId) {
+    console.log('user registration request validation by admin')
+    console.log(new Date())
+   return Course.register(userType,userId,courseId).then((res,err)=>{
+     if(!err && res.success != false){
+
+      return RegistrationRequest.findOneAndRemove({userId:userId,courseId:courseId})
+   
+     }
+     })
+   },
+   async userRegistrationReject(userId,courseId) {
+    console.log('user registration request rejection by admin')
+    console.log(new Date())
+    const request = await RegistrationRequest.find({userId:userId,courseId:courseId})
+    request[0].state="rejeccted"
+    return request[0].save() 
+     },
+
   addOne (course) {
     console.log('course addOne')
     console.log(new Date())

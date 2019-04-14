@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const Student =require('./student')
 mongoose.Promise=Promise
 
 const Schema =mongoose.Schema
@@ -24,33 +24,20 @@ endDate :{
     default:new Date()
 },
 totalHours:{
-    type:Number,
-    required :true
+    type:Number
 },
 level:{
     type:String,
-    required:'true'
 }
 ,
-requirements:{
-type:[String],
-required:true
-} ,
-goals :{
-type:[String],
-required:true
-},
 briefDescription:{
-type:String,
-required:true
+    type:String,
 },
 detailedDescription:{
-type:String,
-required:true
+    type:String,
 },
 totalPlaces :{
     type:Number,
-    required :true
 },
 availablePlaces :{
     type:Number
@@ -62,8 +49,15 @@ globalRating: {
 type :{
     type :String
 },
+
 concernedBranches :{
     type:[String]
+},
+requirements:{
+    type:[String],
+} ,
+goals :{
+    type:[String],
 },
 ratings:{
     type:[{
@@ -81,11 +75,58 @@ CourseSchema.methods.isUserRegistered = function(userId)  {
    return this.attendees.includes(userId)
   };
 
-  CourseSchema.methods.doesUserRated = function(userId)  {
+CourseSchema.methods.doesUserRated = function(userId)  {
       usersAlreadyRated=this.ratings.map(rating=>rating.userId)
       return usersAlreadyRated.includes(userId)
    };
+CourseSchema.statics.register = async function(userType,userId,courseId)  {
+        const course = await Course.findById(courseId)
+       if (course){
+        if(!course.isUserRegistered(userId)){
+          course.attendees.push(userId)
+          course.save()
+          //refreshing the rating info in the user document
+          
+          if(userType=="student"){
+              var user=await Student.findById(userId)
 
+          }else if(userType=="teacher"){
+              var user=await Teacher.findById(userId)
+
+          }else{
+            return {
+              success:false,
+              message:"Only teachers and students can register to courses  "
+              }
+          }
+          if(user){
+            user.coursesAttended.push({
+              _id:courseId,
+              rated :false,
+              rating:undefined
+            })
+              return user.save()
+          }else {
+            return {
+              success:false,
+              message:"User not found "
+              }
+          }
+        }else {
+          return {
+            success:false,
+            message:"user is already registered in this course"
+            }
+        }
+                  
+            }else{
+              console.log('!course')
+             return {
+              success:false,
+              message:"Course not found "
+              }
+            }          
+};
 
 const Course = mongoose.model('Course', CourseSchema)
 

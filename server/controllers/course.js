@@ -5,6 +5,14 @@ module.exports = {
     const courses = await courseService.getAll()
     res.json(courses)
   },
+  async getAllUsersRequests (req, res) {
+    const courses = await courseService.getAllUsersRequests()
+    res.json(courses)
+  },
+  async getUserRequests (req, res) {
+    const courses = await courseService.getUserRequests(req.params.userId)
+    res.json(courses)
+  },
   async getByBranch (req, res) {
     const courses = await courseService.getByBranch(req.params.branch)
     res.json(courses)
@@ -25,8 +33,16 @@ module.exports = {
    const ratingUser= await courseService.rateCourse(req.body.userType,req.body.userId,req.body.courseId,req.body.rating)
    res.json(ratingUser)
   },
-   async userRegistration (req, res) {
-    const registeredUser = await courseService.userRegistration(req.body.userType,req.body.userId,req.body.courseId)
+   async userRegistrationRequest (req, res) {
+    const registeredUser = await courseService.userRegistrationRequest(req.body.userId,req.body.courseId)
+    res.json(registeredUser)
+  },
+  async userRegistrationValidation (req, res) {
+    const registeredUser = await courseService.userRegistrationValidation(req.body.userType,req.body.userId,req.body.courseId)
+    res.json(registeredUser)
+  },
+  async userRegistrationReject (req, res) {
+    const registeredUser = await courseService.userRegistrationReject(req.body.userId,req.body.courseId)
     res.json(registeredUser)
   },
 
