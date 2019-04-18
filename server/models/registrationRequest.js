@@ -1,4 +1,7 @@
 const mongoose = require('mongoose')
+const Course =require('./course').schema
+const Student=require('./student').schema
+const Teacher=require('./teacher').schema
 
 mongoose.Promise=Promise
 
@@ -13,12 +16,13 @@ courseId:{
     type:String,
     required:true
 },
+course:Course,
+user:Student|Teacher,
 state:{
     type:String,
     required :true,
     default:'pending'
 }
-
 
 });
 

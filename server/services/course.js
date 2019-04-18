@@ -2,6 +2,7 @@
 const Course = require('../models/course')
 const Student = require('../models/student')
 const Teacher = require('../models/teacher')
+const indicatorService=require('../services/indicator')
 const RegistrationRequest=require('../models/registrationRequest')
 const mongodb = require("mongodb")
 
@@ -18,12 +19,7 @@ module.exports = {
     console.log(new Date())
     return Course.findById({_id: _id})
   },
-  getByBranch (branch) {
-    console.log('branch courses')
-    console.log(new Date())
-    return Course.find({concernedBranches:branch})
-  },
-
+  
   // this two methods concers courses registration requests
   getAllUsersRequests () {
     console.log('course requests getAll')
@@ -136,10 +132,7 @@ module.exports = {
           success:false,
           message:"user already rated this course"
           }
-      }
-
-
-          
+      }    
       
     }else  {
       let err={
@@ -149,7 +142,7 @@ module.exports = {
       return err
     }
   },
-  async userRegistrationRequest(userId,courseId) {
+  async userRegistrationRequest(userType,userId,courseId) {
     console.log('user registration request')
     console.log(new Date())
 
@@ -157,8 +150,19 @@ module.exports = {
       const request = await RegistrationRequest.find({userId:userId,courseId:courseId})
       if(request.length == 0){
        let newRequest =new RegistrationRequest()
-       newRequest.userId=userId
-       newRequest.courseId=courseId
+       if(userType=="student"){
+        var user=await Student.findById(userId)
+
+      }else if(userType=="teacher"){
+        var user=await Teacher.findById(userId)
+
+      }  
+      const course =await Course.findById(courseId) 
+
+      newRequest.userId=userId
+      newRequest.courseId=courseId
+      newRequest.course=course
+      newRequest.user=user
 
        return newRequest.save()
       }else{
@@ -183,7 +187,7 @@ module.exports = {
     console.log(new Date())
    return Course.register(userType,userId,courseId).then((res,err)=>{
      if(!err && res.success != false){
-
+      
       return RegistrationRequest.findOneAndRemove({userId:userId,courseId:courseId})
    
      }
@@ -193,25 +197,32 @@ module.exports = {
     console.log('user registration request rejection by admin')
     console.log(new Date())
     const request = await RegistrationRequest.find({userId:userId,courseId:courseId})
-    request[0].state="rejeccted"
+    request[0].state="rejected"
     return request[0].save() 
      },
 
-  addOne (course) {
+  async addOne (course) {
     console.log('course addOne')
     console.log(new Date())
     let _course = new Course(course)
     _course.availablePlaces=_course.totalPlaces
+    _course.realized=false
+    //update number of cneter planified courses 
+    await indicatorService.incrementCenterTrainingsNumber("planified")
     return _course.save()
   },
-  updateOne (_id, _course) {
-    console.log('client updateOne')
+  async updateOne (_id, _course) {
+    console.log('course updateOne')
     console.log(new Date())
-    _course.updatedAt = new Date()
-    return Course.findByIdAndUpdate({_id: _id}, _course)
+    let beforeUpdate=await Course.findById(_id)
+    let afterUpdate= await Course.findByIdAndUpdate(_id, _course,{new:true})
+    if((beforeUpdate.realized!=afterUpdate.realized) &&(afterUpdate.realized=true) ) {
+      await indicatorService.incrementCenterTrainingsNumber('realized')
+    }
+    return afterUpdate
   },
   deleteOne (_id) {
-    console.log('client deleteOne')
+    console.log('course deleteOne')
     console.log(new Date())
     return Course
       .findByIdAndRemove({_id: _id})

@@ -13,10 +13,6 @@ module.exports = {
     const courses = await courseService.getUserRequests(req.params.userId)
     res.json(courses)
   },
-  async getByBranch (req, res) {
-    const courses = await courseService.getByBranch(req.params.branch)
-    res.json(courses)
-  },
   async getRecommendations (req, res) {
     const courses = await courseService.getRecommendations(req.params.userType,req.params.userId)
     res.json(courses)
@@ -34,7 +30,7 @@ module.exports = {
    res.json(ratingUser)
   },
    async userRegistrationRequest (req, res) {
-    const registeredUser = await courseService.userRegistrationRequest(req.body.userId,req.body.courseId)
+    const registeredUser = await courseService.userRegistrationRequest(req.body.userType,req.body.userId,req.body.courseId)
     res.json(registeredUser)
   },
   async userRegistrationValidation (req, res) {

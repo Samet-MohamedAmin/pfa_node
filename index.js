@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const path = require('path')
 const passport = require('passport');
 var cors = require('cors')
+const Indicator=require('./server/models/indicator')
 
 const http = require('http')
 
@@ -28,6 +29,8 @@ const connexion = mongoose.connect(mongo_url, function (err) {
   }
   else {
     console.log('SUCCESSFULLY connected to mongo')
+    Indicator.initilizeIndicatorsList()
+
   }
 })
 const app = express()
@@ -55,6 +58,7 @@ app.use(passport.initialize());
 //including the routes
 app.use('/api', require('./server/routes/person'))
 app.use('/api', require('./server/routes/course'))
+app.use('/api', require('./server/routes/indicator'))
 
 
 const port = parseInt(process.env.PORT, 10) || 8000
