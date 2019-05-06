@@ -5,6 +5,7 @@ const router = express.Router()
 const adminCheck=require('../config/adminAuthMiddelware').checkAdminToken
 const authCheck= require('../config/authMiddelware').checkToken
 const courseController = require('../controllers/course')
+const upload = require('../../index').upload
 
 router
   .get('/course', courseController.getAll)
@@ -12,7 +13,7 @@ router
   .get('/course/recommendations/:userType/:userId',authCheck, courseController.getRecommendations)
   .get('/course/request/all',adminCheck, courseController.getAllUsersRequests)
   .get('/course/request/:userId',authCheck, courseController.getUserRequests)
-  .post('/course',adminCheck,courseController.addOne)
+  .post('/course',adminCheck,upload.single('courseImage'),courseController.addOne)
   .post('/course/rate', authCheck,courseController.rateCourse)
   .post('/course/registration/request',authCheck, courseController.userRegistrationRequest)
   .post('/course/registration/valid',adminCheck, courseController.userRegistrationValidation)

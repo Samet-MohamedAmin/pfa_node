@@ -18,7 +18,7 @@ module.exports = {
     res.json(courses)
   },
   async addOne (req, res) {
-    const course = await courseService.addOne(req.body)
+    const course = await courseService.addOne(req.body,req.file)
     res.json(course)
   },
   async getOne (req, res) {

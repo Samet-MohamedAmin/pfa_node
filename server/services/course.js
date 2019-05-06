@@ -201,12 +201,13 @@ module.exports = {
     return request[0].save() 
      },
 
-  async addOne (course) {
+  async addOne (course,file) {
     console.log('course addOne')
     console.log(new Date())
     let _course = new Course(course)
     _course.availablePlaces=_course.totalPlaces
     _course.realized=false
+    _course.courseImage=file.path
     //update number of cneter planified courses 
     await indicatorService.incrementCenterTrainingsNumber("planified")
     return _course.save()

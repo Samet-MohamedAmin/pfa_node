@@ -34,7 +34,7 @@ const connexion = mongoose.connect(mongo_url, function (err) {
   }
 })
 const app = express()
-
+app.use('/uploads',express.static('uploads'))
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
@@ -55,6 +55,22 @@ app.use((err, req, res, next) => {
 require('./server/config/passport');
 app.use(passport.initialize());
 
+//multer 
+const multer =require('multer')
+const storage =multer.diskStorage({
+  destination:function(req,file,cb){
+cb(null,'./uploads')
+  },
+  filename:function(req,file,cb){
+  cb(null,new Date().toISOString().replace(/:/g, '-')+'_'+file.originalname)
+  }
+})
+const upload =multer({storage:storage})
+
+module.exports={
+  upload
+}
+
 //including the routes
 app.use('/api', require('./server/routes/person'))
 app.use('/api', require('./server/routes/course'))
@@ -65,3 +81,4 @@ const port = parseInt(process.env.PORT, 10) || 8000
 app.set('port', port)
 const server = http.createServer(app)
 server.listen(port)
+

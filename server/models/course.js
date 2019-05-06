@@ -55,7 +55,10 @@ realized:{
     type:Boolean,
     default:false
 },
-
+courseImage:{
+type:String,
+required:true
+},
 concernedBranches :{
     type:[String]
 },
