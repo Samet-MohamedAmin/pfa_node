@@ -19,9 +19,11 @@ module.exports = {
         let indicators=await Indicator.getIndicators() 
         if(type=="planified")
         indicators.numberOfTrainingsPlanifiedByTheCenter++
-        if(type=="realized")
-        indicators.numberOfTrainingsRealizedByTheCenter++
-
+        if(type=="realized"){
+          indicators.numberOfTrainingsRealizedByTheCenter++
+          indicators.numberOfTotalCenterActions++
+        }
+        
          return indicators.save()
       },
        updateOne (_id, _indicators) {

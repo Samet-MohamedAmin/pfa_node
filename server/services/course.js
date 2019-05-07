@@ -187,7 +187,6 @@ module.exports = {
     console.log(new Date())
    return Course.register(userType,userId,courseId).then((res,err)=>{
      if(!err && res.success != false){
-      
       return RegistrationRequest.findOneAndRemove({userId:userId,courseId:courseId})
    
      }

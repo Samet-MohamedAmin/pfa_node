@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Student =require('./student')
-const indicatorController = require('../controllers/indicator')
+const indicatorService = require('../services/indicator')
 
 mongoose.Promise=Promise
 
@@ -116,7 +116,7 @@ CourseSchema.statics.register = async function(userType,userId,courseId)  {
             })
 
             //update number of formed members in the indicators
-            indicatorController.incrementFormedMembersNumber(userType,user.gender=="female")
+            indicatorService.incrementFormedMembersNumber(userType,user.gender=="female")
 
             return user.save()
           }else {
