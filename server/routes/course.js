@@ -13,7 +13,7 @@ router
   .get('/course/recommendations/:userType/:userId',authCheck, courseController.getRecommendations)
   .get('/course/request/all',adminCheck, courseController.getAllUsersRequests)
   .get('/course/request/:userId',authCheck, courseController.getUserRequests)
-  .post('/course',adminCheck,upload.single('courseImage'),courseController.addOne)
+  .post('/course',upload.single('courseImage'),courseController.addOne)
   .post('/course/rate', authCheck,courseController.rateCourse)
   .post('/course/registration/request',authCheck, courseController.userRegistrationRequest)
   .post('/course/registration/valid',adminCheck, courseController.userRegistrationValidation)

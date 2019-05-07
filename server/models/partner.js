@@ -29,6 +29,11 @@ cin :{
     required :true
 },
 
+gender:{
+    type:String,
+    required:true
+},
+
   company: {
     type: String, 
     required: true

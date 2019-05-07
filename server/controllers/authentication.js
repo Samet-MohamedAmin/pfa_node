@@ -13,7 +13,7 @@ module.exports.register = (req, res) => {
 switch (req.body.type){
 case'student': {
    let student =new Student();
-   initialisePerson(student,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin)
+   initialisePerson(student,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin,req.body.gender)
    student.numInscription=req.body.numInscription
    student.yearOfStudy=req.body.yearOfStudy
    student.branch=req.body.branch
@@ -35,7 +35,7 @@ case'student': {
   break;
 case 'teacher' :{
     let teacher =new Teacher();
-    initialisePerson(teacher,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin)
+    initialisePerson(teacher,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin,req.body.gender)
     teacher.department=req.body.department,
     teacher.speciality=req.body.speciality,
     
@@ -57,7 +57,7 @@ case 'teacher' :{
 
 case 'partner' :{
     let partner =new Partner();
-    initialisePerson(partner,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin)
+    initialisePerson(partner,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin,req.body.gender)
 
     partner.company=req.body.company,
     partner.speciality=req.body.speciality
@@ -79,7 +79,7 @@ case 'partner' :{
   break;
 case 'personal' :{
     let personal =new Personal();
-    initialisePerson(personal,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin)
+    initialisePerson(personal,req.body.firstName,req.body.lastName,req.body.email,req.body.birthday,req.body.cin,req.body.gender)
     personal.setPassword(req.body.password);
 
     personal.save((err,pers) => {

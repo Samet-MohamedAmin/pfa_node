@@ -27,8 +27,8 @@ module.exports = {
     return RegistrationRequest
       .find()
   },
-  getUserRequests () {
-    console.log('course requests getAll')
+  getUserRequests (userId) {
+    console.log('user course requests getAll')
     console.log(new Date())
     return RegistrationRequest
       .find({userId:userId})
