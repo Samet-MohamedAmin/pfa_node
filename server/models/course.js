@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Student =require('./student')
+const Teacher =require('./teacher')
 const indicatorService = require('../services/indicator')
 
 mongoose.Promise=Promise
@@ -88,6 +89,35 @@ CourseSchema.methods.doesUserRated = function(userId)  {
       usersAlreadyRated=this.ratings.map(rating=>rating.userId)
       return usersAlreadyRated.includes(userId)
    };
+
+CourseSchema.methods.deleteAllRegistrations = function()  {
+    this.attendees.forEach(function(userId){
+    Student.findById(userId).exec((err,student)=>{
+        if(err) {
+            console.log(err)
+            return;
+        }
+        if(!student){
+        Teacher.findById(userId,(err,teacher)=>{
+            if(err) {
+                console.log(err)
+                return;
+            }
+           let coursesAttendedIds=teacher.coursesAttended.map(course=>course._id)
+           let index= coursesAttendedIds.indexOf(this._id)
+           teacher.coursesAttended.splice(index,1)
+           teacher.save()
+        })
+        }else if(student){
+            let coursesAttendedIds=student.coursesAttended.map(course=>course._id)
+            let index= coursesAttendedIds.indexOf(this._id)
+            student.coursesAttended.splice(index,1)
+            student.save()
+        }
+    })
+    })
+   };
+
 CourseSchema.statics.register = async function(userType,userId,courseId)  {
         const course = await Course.findById(courseId)
        if (course){

@@ -185,12 +185,12 @@ module.exports = {
   async userRegistrationValidation(userType,userId,courseId) {
     console.log('user registration request validation by admin')
     console.log(new Date())
-   return Course.register(userType,userId,courseId).then((res,err)=>{
-     if(!err && res.success != false){
-      return RegistrationRequest.findOneAndRemove({userId:userId,courseId:courseId})
-   
+   let user =await(Course.register(userType,userId,courseId))
+     if(user.success != false){
+     RegistrationRequest.findOneAndRemove({userId:userId,courseId:courseId})
      }
-     })
+     return user
+     
    },
    async userRegistrationReject(userId,courseId) {
     console.log('user registration request rejection by admin')
@@ -226,11 +226,17 @@ module.exports = {
     console.log(new Date())
     return Course
       .findByIdAndRemove({_id: _id})
-      .exec((err, data) => {
+      .exec(async(err, course) => {
         if (err) {
           console.error(err)
         } else {
-          console.log(data)
+          if (course.attendees.length >0){
+          course.deleteAllRegistrations()
+          await indicatorService.decrementCenterTrainingsNumber("both")
+          }
+          else{
+          await indicatorService.decrementCenterTrainingsNumber("planified")
+          }
         }
       })
   }

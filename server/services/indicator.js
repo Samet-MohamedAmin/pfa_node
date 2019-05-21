@@ -19,9 +19,22 @@ module.exports = {
         let indicators=await Indicator.getIndicators() 
         if(type=="planified")
         indicators.numberOfTrainingsPlanifiedByTheCenter++
-        if(type=="realized"){
+        else if(type=="realized"){
           indicators.numberOfTrainingsRealizedByTheCenter++
           indicators.numberOfTotalCenterActions++
+        }
+        
+         return indicators.save()
+      },
+      async decrementCenterTrainingsNumber(type){
+        let indicators=await Indicator.getIndicators() 
+        if(type=="planified")
+        indicators.numberOfTrainingsPlanifiedByTheCenter--
+      
+        else if(type="both"){
+          indicators.numberOfTrainingsPlanifiedByTheCenter--
+          indicators.numberOfTrainingsRealizedByTheCenter--
+          indicators.numberOfTotalCenterActions--
         }
         
          return indicators.save()
