@@ -156,7 +156,12 @@ module.exports = {
       }else if(userType=="teacher"){
         var user=await Teacher.findById(userId)
 
-      }  
+      } else if(userType !="student" && userType !="teacher" ) {
+        return {
+          success:false ,
+          message:"User must be of type teacher or student "
+        }
+      } 
       const course =await Course.findById(courseId) 
 
       newRequest.userId=userId
