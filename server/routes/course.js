@@ -11,7 +11,7 @@ router
   .get('/course', courseController.getAll)
   .get('/course/:_id', courseController.getOne)
   .get('/course/recommendations/:userType/:userId',authCheck, courseController.getRecommendations)
-  .get('/course/request/all',adminCheck, courseController.getAllUsersRequests)
+  .get('/course/request/all', courseController.getAllUsersRequests) // ,adminCheck
   .get('/course/request/:userId',authCheck, courseController.getUserRequests)
   .post('/course',upload.single('courseImage'),courseController.addOne)
   .post('/course/rate', authCheck,courseController.rateCourse)
