@@ -123,6 +123,7 @@ CourseSchema.statics.register = async function(userType,userId,courseId)  {
        if (course){
         if(!course.isUserRegistered(userId)){
           course.attendees.push(userId)
+          course.availablePlaces--
           course.save()
           //refreshing the rating info in the user document
           

@@ -60,15 +60,23 @@ const StudentSchema = Schema({
             }
         ]
     },
-    hash :String ,
-    salt : String 
+    hash: {
+        type: String,
+        required: true,
+        default:""
+    },
+    salt :{
+        type: String,
+        required:true,
+        default:""
+    }, 
   });
 
-  StudentSchema.methods.setPassword = (password) => {
+  StudentSchema.methods.setPassword = function(password) {
     this.salt = crypto.randomBytes(16).toString('hex');
     this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
   };
-  StudentSchema.methods.validPassword = (password) => {
+  StudentSchema.methods.validPassword = function(password) {
     const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
     return this.hash === hash;
   };

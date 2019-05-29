@@ -192,11 +192,16 @@ module.exports = {
     console.log(new Date())
    let user =await(Course.register(userType,userId,courseId))
      if(user.success != false){
-     RegistrationRequest.findOneAndRemove({userId:userId,courseId:courseId})
+      RegistrationRequest.findOneAndUpdate( {userId:userId,courseId:courseId}, {$set:{state:"accepted"}}, {new: true}, (err, doc) => {
+        if (err) {
+            console.log("Something wrong when updating data!");
+        }
+    });
      }
      return user
      
    },
+  
    async userRegistrationReject(userId,courseId) {
     console.log('user registration request rejection by admin')
     console.log(new Date())

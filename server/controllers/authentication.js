@@ -19,7 +19,6 @@ case'student': {
    student.branch=req.body.branch
    student.requestedPath=req.body.requestedPath
    student.setPassword(req.body.password)
-
     student.save((err,stud) => {
       if(!err){
         let token;
@@ -28,6 +27,8 @@ case'student': {
         res.json({
           "token" : token
         });
+      }else{
+        console.log(err)
       }
         
       });
