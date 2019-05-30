@@ -42,14 +42,15 @@ module.exports = {
       if(userType=="student"){
         const student=await Student.findById(userId)
             if(student){
-            let studentCoursesAttendedIds =student.coursesAttended.map((course)=>course._id)
+            let studentCoursesAttendedIds =student.coursesAttended.map(course=>course._id)
             return Course.find({
-              concernedBranches:student.branch,
+              concernedBranches:{ $elemMatch:{$regex : `.*${student.branch}.*`}},
               type:student.requestedPath,
               _id:{$nin:studentCoursesAttendedIds}
             })
             .sort({globalRating:-1})
             .limit(10)
+
               }else {
                 let err={
                   success:false,
