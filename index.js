@@ -77,6 +77,13 @@ app.use('/api', require('./server/routes/course'))
 app.use('/api', require('./server/routes/indicator'))
 
 
+// Swagger API automatic documentation
+// on: https://<host>:<port>/api-docs
+const expressOasGenerator = require('express-oas-generator');
+expressOasGenerator.init(app, {});
+
+app.use(express.json());
+
 const port = parseInt(process.env.PORT, 10) || 8000
 app.set('port', port)
 const server = http.createServer(app)
